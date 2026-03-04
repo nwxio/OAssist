@@ -61,7 +61,7 @@ services:
         tail -f /dev/null
     environment:
       MINIO_ROOT_USER: admin
-      MINIO_ROOT_PASSWORD: Xoobo100@Ah10
+      MINIO_ROOT_PASSWORD: password123
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
       interval: 10s
