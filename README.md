@@ -13,6 +13,7 @@ This repository ships a complete web UI (`/ui`), API, and background indexing wo
 
 - [Why OAssist](#why-oassist)
 - [Features](#features)
+- [Chat UI Preview](#chat-ui-preview)
 - [Architecture](#architecture)
 - [Role and Access Model](#role-and-access-model)
 - [Supported File Formats](#supported-file-formats)
@@ -89,6 +90,10 @@ OAssist is built for teams that need:
 - Per-user chat state sync (`/chat/state`) with timestamp conflict checks.
 - Source trees for Outline/Notion/Files with ACL-aware visibility.
 - User manager and ACL editor for super-admin workflows.
+
+## Chat UI Preview
+
+![OAssist chat interface preview](docs/media/chat-ui-preview.svg)
 
 ## Architecture
 
