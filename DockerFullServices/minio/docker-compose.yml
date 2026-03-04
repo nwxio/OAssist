@@ -1,0 +1,86 @@
+version: '3.3'
+
+services:
+  minio:
+    image: minio/minio:RELEASE.2025-07-18T21-56-31Z-cpuv1
+    env_file: ./.env
+    entrypoint: /bin/sh
+    command:
+      - -c
+      - |
+        minio server /data --console-address :9001 &
+        sleep 20
+        mc config host add minio http://localhost:9000 ${MINIO_ADMIN} ${MINIO_ADMIN_PASSWORD}
+        mc mb minio/${MINIO_BUCKET_NAME}
+        mc admin user add minio ${MINIO_USER} ${MINIO_USER_PASSWORD}
+        cat > outline-policy.json <<-EOF
+          {
+            "Version": "2012-10-17",
+            "Statement": [
+              {
+                "Effect": "Allow",
+                "Action": [
+                  "s3:GetBucketLocation",
+                  "s3:ListBucket",
+                  "s3:ListBucketMultipartUploads"
+                ],
+                "Resource": ["arn:aws:s3:::${MINIO_BUCKET_NAME}"]
+              },
+              {
+                "Action": [
+                  "s3:AbortMultipartUpload",
+                  "s3:DeleteObject",
+                  "s3:GetObject",
+                  "s3:ListMultipartUploadParts",
+                  "s3:PutObject",
+                  "s3:GetObject"
+                ],
+                "Effect": "Allow",
+                "Resource": ["arn:aws:s3:::${MINIO_BUCKET_NAME}/*"],
+                "Sid": ""
+              }
+            ]
+          }
+        EOF
+        cat > data-public.json <<-EOF
+          {
+            "Version": "2012-10-17",
+            "Statement": [
+              {
+                "Effect": "Allow",
+                "Principal": { "AWS": "*" },
+                "Action": [ "s3:GetObject", "s3:ListMultipartUploadParts" ],
+                "Resource": [ "arn:aws:s3:::data/public/*" ]
+              }
+            ]
+          }
+        EOF
+        mc anonymous set-json data-public.json minio/${MINIO_BUCKET_NAME}
+        mc admin policy create minio OutlineAppFullAccess outline-policy.json
+        mc admin policy attach minio OutlineAppFullAccess --user=${MINIO_USER}
+        tail -f /dev/null
+    environment:
+      MINIO_ROOT_USER: admin
+      MINIO_ROOT_PASSWORD: Xoobo100@Ah10
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 60s
+    volumes:
+      - minio-data:/data
+    restart: unless-stopped
+    ports:
+      - '9000:9000'
+      - '9001:9001'
+
+networks:
+  default:
+    name: nginxpm
+    external: true
+
+volumes:
+  minio-data:
+    driver: local
+

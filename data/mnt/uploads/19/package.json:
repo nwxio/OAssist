@@ -1,0 +1,10 @@
+{
+  "name": "notion-export",
+  "version": "1.0.0",
+  "scripts": {
+    "export": "node notion-export.js"
+  },
+  "dependencies": {
+    "puppeteer": "^21.0.0"
+  }
+}
