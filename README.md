@@ -93,7 +93,7 @@ OAssist is built for teams that need:
 
 ## Chat UI Preview
 
-![OAssist chat interface preview](docs/media/chat-ui-preview.svg)
+![OAssist chat interface preview](docs/media/chat-ui-preview.jpg)
 
 ## Architecture
 
